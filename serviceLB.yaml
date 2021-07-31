@@ -20,6 +20,7 @@ spec:
      image: chungnd/devops:tagversion
      ports:
      - containerPort: 8080
+  
 
 ---
 apiVersion: v1
