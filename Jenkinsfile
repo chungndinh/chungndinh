@@ -33,7 +33,7 @@ pipeline {
 	    
 	    stage('Build Docker Image') {
 		    steps {
-			    sh 'whoami'
+			    #sh 'whoami'
 			    script {
 				    myimage = docker.build("chungnd/devops:${env.BUILD_ID}")
 			    }
