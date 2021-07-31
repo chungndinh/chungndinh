@@ -66,8 +66,9 @@ pipeline {
 				echo "Start deployment of deployment.yaml"
 				step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 			    echo "Deployment Finished ..."
+				sh "docker image rm ${DOCKER_IMAGE}:${env.BUILD_ID}"
 		    }
-			sh "docker image rm ${DOCKER_IMAGE}:${env.BUILD_ID}"
+			
 	    }
     }
 }
