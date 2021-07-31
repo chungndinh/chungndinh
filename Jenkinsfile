@@ -5,6 +5,7 @@ pipeline {
 	}
 	
 	environment {
+		DOCKER_IMAGE = 'chungnd/devops'
 		PROJECT_ID = 'lively-transit-313800'
                 CLUSTER_NAME = 'cluster-1'
                 LOCATION = 'asia-south1-a'
@@ -35,7 +36,7 @@ pipeline {
 		    steps {
 			    sh 'whoami'
 			    script {
-				    myimage = docker.build("chungnd/devops:${env.BUILD_ID}")
+				    myimage = docker.build("${DOCKER_IMAGE}:${env.BUILD_ID}")
 			    }
 		    }
 	    }
@@ -62,10 +63,11 @@ pipeline {
 				sh "sed -i 's/tagversion/${env.BUILD_ID}/g' deployment.yaml"
 			    echo "Start deployment of serviceLB.yaml"
 			    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'serviceLB.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-				//echo "Start deployment of deployment.yaml"
-				//step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+				echo "Start deployment of deployment.yaml"
+				step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
 			    echo "Deployment Finished ..."
 		    }
+			sh "docker image rm ${DOCKER_IMAGE}:${env.BUILD_ID}"
 	    }
     }
 }
